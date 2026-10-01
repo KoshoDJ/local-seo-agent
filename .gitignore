@@ -1,0 +1,22 @@
+# Secrets - never commit
+.env
+.env.*
+!.env.example
+credentials.json
+token.json
+*.iam.json
+
+# Dependencies and build output
+node_modules/
+.next/
+out/
+.vercel/
+
+# Python
+__pycache__/
+*.pyc
+code/.venv/
+
+# Local noise
+.DS_Store
+*.log

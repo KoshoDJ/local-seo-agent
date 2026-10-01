@@ -1,0 +1,44 @@
+@import "tailwindcss";
+
+
+/* Mobile collapse for the homepage's fixed multi-column grids. Desktop untouched;
+   below 720px every tagged grid stacks to one column so nothing overflows the viewport. */
+@media (max-width: 719px) {
+  .sm-stack { grid-template-columns: 1fr !important; }
+  .hdr-row { flex-wrap: wrap; height: auto !important; padding-top: 10px; padding-bottom: 10px; }
+}
+
+/* Footer sits on the near-black accent surface; the light-theme muted grays
+   fall under 4.5:1 there, so its labels lift to a lighter neutral. */
+footer .gw-label { color: var(--ink-300) !important; }
+
+
+/* Mobile collapse for pages tagged `mstack-page`. Same job as .sm-stack on the
+   homepage, but matched on the inline grid values the templates ship with, so a
+   3,900-line page does not need 10 hand-edits. Desktop is untouched: everything
+   here lives inside the max-width 719px query. Without it the fixed columns run
+   off the side of a phone, which is also what makes axe read footer text against
+   the white page background instead of the dark footer. */
+@media (max-width: 719px) {
+  .mstack-page [style*="grid-template-columns:1fr 1fr"],
+  .mstack-page [style*="grid-template-columns:repeat(3, 1fr)"],
+  .mstack-page [style*="grid-template-columns:1fr 1.2fr"],
+  .mstack-page [style*="grid-template-columns:1.1fr 0.9fr"],
+  .mstack-page [style*="grid-template-columns:0.9fr 1.1fr"],
+  .mstack-page [style*="grid-template-columns:1.5fr 1fr 1fr 1fr"] {
+    grid-template-columns: 1fr !important;
+  }
+  .mstack-page header .gw-container {
+    flex-wrap: wrap;
+    height: auto !important;
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+  /* Wide comparison tables scroll inside their own frame instead of pushing the page sideways. */
+  .mstack-page table { display: block; overflow-x: auto; }
+}
+
+/* The footer's bottom bar (copyright, Privacy, Terms) inherits --ink-400, which
+   lands at 4.14:1 on the near-black footer - just under WCAG AA. Same lift the
+   footer labels already get, applied to anything in the footer using that token. */
+footer [style*="color:var(--ink-400)"] { color: var(--ink-300) !important; }
