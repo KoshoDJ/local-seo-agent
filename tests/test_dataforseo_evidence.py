@@ -5,6 +5,8 @@ import unittest
 from code.dataforseo.confidence import ConfidenceGate
 from code.dataforseo.content_match import ContentCandidate, match_verified_content
 from code.dataforseo.paa import extract_paa
+from code.dataforseo.opportunity import OpportunityInputs, score_opportunity
+from code.dataforseo.serp import compare_serps
 
 
 class EvidenceLayerTests(unittest.TestCase):
@@ -47,6 +49,28 @@ class EvidenceLayerTests(unittest.TestCase):
         questions = extract_paa(response, "kids karate")
         self.assertEqual(len(questions), 1)
 
+    def test_serp_overlap_borderline_requires_review(self):
+        def response(urls):
+            return {"tasks": [{"result": [{"items": [
+                {"type": "organic", "url": url} for url in urls
+            ]}]}]}
+        a = response(["https://a.com/1", "https://b.com/2", "https://c.com/3", "https://d.com/4"])
+        b = response(["https://a.com/1", "https://b.com/2", "https://c.com/3", "https://x.com/9"])
+        result = compare_serps(a, b)
+        self.assertEqual(result.shared_urls, 3)
+        self.assertEqual(result.decision, "manual_review")
+
+    def test_opportunity_does_not_require_authority_score(self):
+        result = score_opportunity(OpportunityInputs(
+            intent_fit=1.0,
+            serp_winnability=.8,
+            topical_proximity=.9,
+            business_value=1.0,
+            demand_signal=.5,
+            provider_difficulty=62,
+        ))
+        self.assertGreater(result.score, .8)
+        self.assertEqual(result.components["provider_difficulty"], 62)
 
 if __name__ == "__main__":
     unittest.main()
