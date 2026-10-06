@@ -17,3 +17,13 @@ Default freshness:
 - keyword metrics/intent: 30 days
 
 The first adapter intentionally uses Python standard library only so it does not introduce a dependency-management requirement into the existing repository.
+
+## Phase 2 keyword research
+
+`/keyword-research` now uses provider-neutral evidence rules:
+- DataForSEO metrics are localized and never replaced with invented numeric estimates.
+- Search intent labels are hints; live top-10 SERP composition is the final evidence.
+- SERP clustering uses the repository convention: 4+ shared top-10 organic URLs = same-page candidate, 0-2 = separate-page candidate, exactly 3 = manual review.
+- Opportunity scoring prioritizes intent fit, live-SERP winnability, topical proximity and business value over raw demand.
+- DataForSEO keyword difficulty is retained as evidence but is never subtracted from a domain-authority metric.
+- Money/service pages remain governed by what the business actually sells; opportunity scoring controls prioritization, not whether a legitimate service exists.
