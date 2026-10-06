@@ -8,19 +8,17 @@ Build my keyword map. Topic: $ARGUMENTS (if empty, read `context/business.md`; i
 **Expand mode (`/keyword-research expand`)** - skip to the EXPANSION flow at the bottom instead of the base flow. **Run it TWICE in the life of a map, for two different reasons, and say which one is happening:**
 
 - **Up front, right after the base run** - this is the one people skip, and it is the bigger lever. The base run goes wide across the industry, so it under-covers every individual root by design; expand pulls each root's FULL family (~100 variants) and that is what makes hubs arrive complete instead of two spokes short. **Front-load the depth. Do not wait for the map to run dry to get it.**
-- **Ongoing, whenever the map thins out** - the refill. This one cannot be front-loaded, and not because of effort: keywords quarantined by the difficulty ceiling are unrankable *today* and genuinely reopen as Authority Score climbs. Same for new services, new cities, and standalone pages a later hub absorbs. No amount of up-front pulling surfaces those; only running it again does.
+- **Ongoing, whenever the map thins out** - the refill. This one cannot be front-loaded, and not because of effort: keywords quarantined by current SERP competitiveness or weak topical fit can genuinely reopen as the site and results change. Same for new services, new cities, and standalone pages a later hub absorbs. No amount of up-front pulling surfaces those; only running it again does.
 
-**Both, not either.** A big pull up front and a standing loop on top of it. If someone asks which one to do, the answer is the up-front pull first, because it is worth more - and then the loop forever, because the ceiling keeps lifting.
+**Both, not either.** A big pull up front and a standing loop on top of it. If someone asks which one to do, the answer is the up-front pull first, because it is worth more - and then the loop forever, because the evidence keeps changing.
 
-**0. Ask the market FIRST - before pulling a single number.** Semrush keeps a separate keyword database per country, and it defaults to the US. Pull US data for a business in Manchester or Calgary and every volume, difficulty and CPC on the map is for the wrong country - the map looks perfect and is quietly worthless.
+**0. Ask the market FIRST - before pulling a single number.** DataForSEO supports explicit geographic targeting. A plausible-looking map from the wrong location is still wrong.
 
-So, before any data pull, ask: **"Which country are your customers searching from?"** (and if the business serves more than one, which is the primary market). Take it from `context/business.md` if the service area is already recorded there, and just confirm it back to me rather than asking cold.
-
-Then set the Semrush database to match - `us`, `uk`, `ca`, `au`, `nz`, `ie`, `de`, `fr` and so on - and **say on screen which database you're using** so I can catch it if it's wrong. Record it in CLAUDE.md "## My setup" so it's never asked twice.
+Before any data pull, resolve the customer's primary market from `context/business.md` and confirm it. Configure `DATAFORSEO_LOCATION_CODE` (preferred) or `DATAFORSEO_LOCATION_NAME`, plus `DATAFORSEO_LANGUAGE_CODE`. **Say on screen which location and language are being used.** Never silently fall back to a country or the US. Record the resolved market in CLAUDE.md "## My setup" so it is not asked twice.
 
 Two traps worth knowing:
 - **Language and spelling shift with the market.** UK searches "boiler repair" where the US searches "water heater repair"; "gutter cleaning" vs "eavestrough cleaning" in parts of Canada. Ask which words locals actually use, and never assume the US phrasing translates.
-- **National volume is not local volume.** Semrush reports country-level volume; a business serving one city sees a fraction of it. Never present a national number as if it's their addressable demand - say plainly that it's the country figure and that local share is a slice of it.
+- **Geo-targeted volume and city-modified volume answer different questions.** For a local business, test both the unmodified service query targeted to the market and explicit `[service] [city]` variants when useful. Label the location used for every metric; never present a broader market number as local demand.
 
 **Then ask the business type - it changes the whole shape of the map.** Ask: **"Are you ecommerce, a local/national brand, or an internet business?"** Take it from `context/business.md` if it's recorded, confirm rather than ask cold, and record it in CLAUDE.md "## My setup". Never assume - these three get completely different maps from the same command, and guessing wrong wastes the whole research pass.
 
@@ -60,11 +58,11 @@ Everything downstream inherits this list. Get it wrong and 1,000 keywords, 50 cl
 A keyword map is hours of research plus everything built on top of it. Replacing one is a deletion, and it falls under the same rule as any other deletion: it needs an explicit yes. **Default to appending** (that is what `expand` mode is for). If replacement is genuinely wanted, say what is being lost, get the yes, then write over it. **No archive folder** - git already holds every previous version.
 
 
-### ⛔ The difficulty ceiling applies to BLOG POSTS. Money pages are governed by what the business sells.
+### ⛔ Winnability gating applies to BLOG POSTS. Money pages are governed by what the business sells.
 
 The two page types have different jobs, so one ceiling cannot govern both.
 
-**Blog posts: the ceiling is a hard gate.** A blog post's only job is to rank. If it cannot rank, it is wasted work, so a term above the ceiling is cut or quarantined until authority catches up. No exceptions.
+**Blog posts: winnability is a hard gate.** If live SERP evidence, intent and topical fit show no credible opening, quarantine it until the evidence changes. No exceptions.
 
 **Service pages: build what they SELL, not what they can rank for today.** Ranking is only one of the ways someone arrives on a money page. It is also where ads land, where the Google Business Profile points, where internal links flow, and where a referral checks them out. A business with no page for its flagship service looks broken to every visitor regardless of what it ranks for - and there is nothing for the rest of the site to link up to.
 
@@ -85,8 +83,9 @@ Say this out loud in the map block rather than hiding it. The honest line is *"t
 **Never cut a service the business actually sells because its keyword is hard.** That is optimising a keyword map at the cost of the website.
 
 **1. Gather.** Cast wide first - cutting comes next, and it all happens in one pass.
-- If the Semrush MCP is connected, pull volume, KD and intent for everything, AND the site's current Authority Score - that score sets the difficulty ceiling, so get it before anything else.
-- If not connected: FIRST recommendation is the **Semrush 14-day free trial** (https://www.semrush.com/partner/yourhandleseo_7401436/?irclickid=UodwPVRilxyZWxsygXUph16GUkr03ZTt3xLWws0&irgwc=1&afsrc=1) - two weeks is enough to build the entire map with real data, and the filters below can't run properly on guesses. Only if I decline: fall back to the free stack (autocomplete, People Also Ask, Trends, trade knowledge), volumes marked ESTIMATE, and note the map needs re-validating when Semrush connects.
+- Use the repository DataForSEO evidence layer in `code/dataforseo/` for keyword metrics, intent and live SERPs. Pull real provider values for the configured location and language.
+- **Never invent numeric search volume, CPC or difficulty.** If DataForSEO returns no numeric value, write `N/A` and make the decision from the remaining evidence. Autocomplete, PAA, Trends and trade knowledge may discover candidates, but they do not become fake numeric metrics.
+- Respect `DATAFORSEO_MAX_SERP_CALLS_PER_RUN` and `DATAFORSEO_MAX_KEYWORD_CALLS_PER_RUN`. Cache hits do not consume a paid-call budget; exceeding a budget stops the run rather than silently spending more.
 
 **2. Filter - all four cuts in one pass, in this order.** Every keyword either survives all four or goes to the cut list with the reason. Never filter halfway and come back later.
 
@@ -161,22 +160,17 @@ For a local service business this is a directive, not a nuance:
 - **Treat informational posts as top-of-funnel and internal-linking fuel, not traffic plays.** Still worth writing - they build topical coverage and they feed links down to the money pages - but do not forecast traffic off them and do not let them dominate the build order.
 - **Say this in the report** when the map skews informational, rather than shipping a list of blog posts whose clicks have already been taken.
 
-**Cut 4 - Difficulty ceiling. A rule of thumb, not a law.** The guardrail from `references/keyword-clusters.md`: **KD at least 30 points BELOW the Authority Score**, and any site with Authority under 60 gets a flat **KD ≤ 30** ceiling.
+**Cut 4 - Opportunity and winnability. No Authority Score arithmetic.**
 
-- Brand new or under 60 · ceiling 30
-- Authority 70 · ceiling 40
-- Authority 80 · ceiling 50
+DataForSEO keyword difficulty is one evidence signal, not a permission score. Do **not** subtract keyword difficulty from Authority Score, Domain Authority, Domain Rating or any other vendor metric.
 
-**Say out loud that this is a rule of thumb, because it is.** No study supports it. KD and Authority Score come from different vendors computed on different bases, so subtracting one from the other is not a dimensionally meaningful operation - it is a useful habit dressed as arithmetic. Keep the ceiling; it does stop a new site burning months on keywords it cannot win. Just never defend it as a law.
+For BLOG opportunities, evaluate the provider-neutral opportunity model in `code/dataforseo/opportunity.py`: intent fit, live-SERP winnability, topical proximity, business value and demand signal. Retain DataForSEO difficulty as supporting evidence, not arithmetic against a domain metric.
 
-**And KD itself is mostly a link count.** Ahrefs computes it purely from referring domains to the top 10, and about 58% of the Semrush score is referring domains plus Authority Score. The same keyword reads anywhere from 46 to 72 depending on the tool, so a KD number is never comparable across tools and a threshold set in one tool cannot be applied to another's score.
+Live SERP evidence matters more than a single difficulty number. Inspect the top 10 for weak entrants, page type, local/map features and competitive shape. A blog opportunity with poor intent fit and no credible SERP opening is quarantined even if difficulty looks easy.
 
-**Two things predict a new site's chances better than KD, so check both on every root:**
+For SERVICE/MONEY pages, build what the business genuinely sells. Opportunity scoring prioritizes order and target phrasing; it does not delete a required service page.
 
-- **Age of the current top 10.** Across 1.3 million US keywords, 72.9% of top-10 pages are more than 3 years old and the average page at position 1 is 5 years old. A SERP with no recent entrants is telling you something KD cannot. A SERP with a page published this year in the top 5 is an opening.
-- **Topical proximity.** Pages on topics a domain already ranks for reached their first click materially faster (roughly 35-40% within three weeks versus about 20% for unrelated topics). Keywords adjacent to existing coverage beat isolated higher-volume ones.
-
-State the ceiling AND the Authority Score it came from in the file header, so the number is never a mystery and the user knows exactly what unlocks as the score climbs. Full evidence and sources: `references/keyword-strategy.md`.
+Everything cut is **quarantined, never deleted**. Re-check it on later expansion runs because SERPs, competitors and the site's topical position change.
 
 Everything cut is **quarantined, never deleted** - it goes in the cut section grouped by *when it becomes useful*, not by rejection reason. A wrong cut is invisible forever; a quarantined keyword gets a second look.
 
@@ -285,8 +279,7 @@ Sort for quick wins: real volume, low difficulty, highest commercial intent firs
 ```markdown
 # Your keyword map
 
-63 pages to build, in order. Nothing here is harder than your site can
-rank for today (difficulty ceiling 30, from your authority score of 9).
+63 pages to build, in order. Metrics: DataForSEO · location: Toronto, Ontario, Canada · checked 2026-10-06.
 
 ---
 
@@ -368,10 +361,10 @@ What happens next (review, publish date, live) is tracked in website-index.md.
 
 ## Keywords saved for later · 41
 
-**Opens up when your authority score reaches about 40 · 12 keywords**
+**Competitive SERP - recheck later · 12 keywords**
 white label seo · seo for lawyers · ppc management services
 
-**Opens up around 55 · 18 keywords**
+**Weak topical fit today · 18 keywords**
 seo retainer · technical seo audit · google ads agency
 
 **Too few searches to be worth a page · 6 keywords**
@@ -421,7 +414,7 @@ Grouped headings (`# Service pages`, `# Blog posts`, `# City pages`) once there 
 
 **How many keywords should survive?** There is no target number - the filters decide, not a quota. As a sanity check: a normal run lands somewhere around **40-80 clusters**, which is 6-12 months of content at a realistic publishing pace. Well under 20 usually means the roots were too narrow or the ceiling is biting hard on a new domain - say so rather than padding the list with keywords that failed Cut 3 or 4. Well over 100 means it's worth splitting into tiers so the first month is obvious.
 
-**Never pad the map to hit a number, and never cap it artificially either.** The map is meant to be re-run: `/keyword-research expand` refills it from new roots whenever it runs dry, and the ceiling itself lifts as Authority Score climbs, so keywords rejected today reopen later. A member running this every few months will keep finding new ground - that's the design, not a shortfall.
+**Never pad the map to hit a number, and never cap it artificially either.** The map is meant to be re-run: `/keyword-research expand` refills it from new roots whenever it runs dry, and SERPs and the site's topical position change, so quarantined keywords can become viable later. A member running this every few months will keep finding new ground - that's the design, not a shortfall.
 
 **4b. Generate `keyword-map.html` - the build-off-it table view. Every time `keyword-map.md` is written or updated, base run or expand.**
 
@@ -448,7 +441,7 @@ Cover five things, short:
 
 **What got folded in, not built.** Every keyword absorbed into an existing row as a secondary instead of becoming its own page, with the row it joined and the overlap count. These are the pages you did not build and the cannibalization you did not ship - name them, because a shorter map is the win here, not a shortfall.
 
-**Where Semrush was wrong.** Name every keyword where the live Google result disagreed with Semrush's intent label, and what you did about it. This is usually a handful and usually the expensive ones - it's the most valuable thing in the report.
+**Where provider intent and the live SERP disagreed.** Name every keyword where DataForSEO's intent classification and the actual top-10 page types pointed in different directions, and what you did. Provider intent is a signal; the SERP is the final evidence.
 
 **What this map is worth, honestly.** Total monthly searches, roughly how many months of content it is at a realistic pace, and the single biggest gap you noticed. If the map is thin, say so plainly rather than dressing it up.
 
@@ -463,7 +456,7 @@ The 12-month content pipeline. Same qualification rule, same clustering - pointe
 
 **E1. Roots.** Identify ~10 ROOT keywords - the trunk topics of this industry (plumbing: water heaters, drains, leaks, toilets, pipes, pricing, emergencies, fixtures, sewer, maintenance). Confirm the roots with me before expanding - 30 seconds now saves an hour of wrong-direction expansion.
 
-**E2. Expand each root into its next-of-kin.** Per root, the full family: cost/pricing variants, how-to, comparisons (X vs Y), problem/symptom phrasings ("why is my..."), lifespan/timing, buying guides, seasonal angles, local-intent variants. Semrush for volume/KD; target ~100 per root, ~1,000 total.
+**E2. Expand each root into its next-of-kin.** Per root, the full family: cost/pricing variants, how-to, comparisons (X vs Y), problem/symptom phrasings ("why is my..."), lifespan/timing, buying guides, seasonal angles, local-intent variants. Use DataForSEO suggestions/related-keyword capabilities and candidate sources such as PAA to expand the family; fetch real localized metrics in batches. Target ~100 candidates per root, ~1,000 total before filtering when the call budget permits.
 
 **E3. Cut ruthlessly, then cluster.** The same four cuts from step 2, in the same order - junk, wrong intent verified on Google, 100+ searches a month, difficulty under the ceiling, then drop intent-duplicates, trivia, and anything business.md's DON'T list rules out. Cluster survivors per `references/keyword-clusters.md`, cluster-vs-spoke test on borderline pairs.
 
