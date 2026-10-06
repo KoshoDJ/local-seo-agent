@@ -91,13 +91,13 @@ Say this out loud in the map block rather than hiding it. The honest line is *"t
 
 **Cut 1 - Junk.** Anything that could never become a page worth having: misspellings, brand names that aren't mine, job and career terms, salary, courses, training, licensing, DIY, tools, parts, wholesale, suppliers, "free", trivia. Also anything the DON'T list in `context/business.md` rules out - a service I don't offer is junk no matter how good the volume looks.
 
-**Cut 2 - Wrong intent, verified on Google. Read `references/search-intent.md` - it IS the rule:** search the term, classify the top 10 results, and 6 or more of one type decides it. Under 6 for every type is a mixed SERP and gets handled per that file. **The 6-of-10 threshold is our internal convention, not a documented standard** - never cite it as best practice. When a call is genuinely close, **err toward transactional**: modifier-based guessing systematically over-labels things informational (82% of measured classification errors ran that direction). **Semrush's intent label is frequently wrong - never trust it alone.** For every keyword that survives Cut 1 and matters, search it and read the actual results page:
+**Cut 2 - Wrong intent, verified on Google. Read `references/search-intent.md` - it IS the rule:** search the term, classify the top 10 results, and 6 or more of one type decides it. Under 6 for every type is a mixed SERP and gets handled per that file. **The 6-of-10 threshold is our internal convention, not a documented standard** - never cite it as best practice. When a call is genuinely close, **err toward transactional**: modifier-based guessing systematically over-labels things informational (82% of measured classification errors ran that direction). **Provider intent labels are hints - never trust them alone.** For every keyword that survives Cut 1 and matters, search it and read the actual results page:
 - Top 10 full of guides, "how much does X cost" articles, Reddit threads, calculators → **informational**, and it belongs to a blog, not a service page
 - Top 10 full of service pages, local businesses, a map pack, ads running → **commercial**, that's a money page
 - Mixed → read what Google chose to rank FIRST, that's the dominant intent
 - Ads showing is a strong commercial signal; a map pack means local intent specifically
 
-Then route it: **blogs own the info terms** (cost, how to, what is, vs), **service pages own the hire terms** (near me, emergency, [city], service, company). Never let both target the same keyword - if a term genuinely fits both, the service page wins and the blog links to it. Say in the report which keywords Semrush labelled wrong; it's usually a handful and it's usually the expensive ones.
+Then route it: **blogs own the info terms** (cost, how to, what is, vs), **service pages own the hire terms** (near me, emergency, [city], service, company). Never let both target the same keyword - if a term genuinely fits both, the service page wins and the blog links to it. Say in the report where the provider intent label disagreed with the live SERP; these disagreements deserve explicit review.
 
 
 ### ⛔ Local blog posts are not national blog posts with a city bolted on.
@@ -437,7 +437,7 @@ Cover five things, short:
 
 **Why these are first.** Name the top 3 and give one line each on what earned that position - volume, difficulty, buyer intent, or that other pages need it to exist first.
 
-**Why I cut what I cut, grouped by reason with counts.** Never a raw list of rejects. "23 were too competitive for a site your age - they open up as your authority grows. 8 had under 100 searches a month. 6 looked commercial in Semrush but Google actually shows guides for them, so they'd be blog posts, not money pages. 4 were services you told me you don't offer."
+**Why I cut what I cut, grouped by reason with counts.** Never a raw list of rejects. "23 were too competitive for a site your age - they open up as your authority grows. 8 had under 100 searches a month. 6 carried a commercial provider label but the live SERP showed guides, so they were routed to blog opportunities rather than money pages. 4 were services you told me you don't offer."
 
 **What got folded in, not built.** Every keyword absorbed into an existing row as a secondary instead of becoming its own page, with the row it joined and the overlap count. These are the pages you did not build and the cannibalization you did not ship - name them, because a shorter map is the win here, not a shortfall.
 
