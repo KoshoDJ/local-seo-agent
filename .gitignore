@@ -20,3 +20,7 @@ code/.venv/
 # Local noise
 .DS_Store
 *.log
+
+# Paid provider responses / query evidence should not be committed
+data/seo-cache/*
+!data/seo-cache/.gitkeep
