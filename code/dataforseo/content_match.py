@@ -1,10 +1,4 @@
-"""Deterministic first-pass matching against a verified URL registry.
-
-Semantic/LLM reasoning may propose candidates, but only verified registry URLs are eligible
-and autonomous use requires the deterministic critical gates in confidence.py.
-"""
-
-from __future__ import annotations
+"""Candidate discovery only; lexical relevance never grants publishing confidence."""
 
 import re
 from dataclasses import dataclass
@@ -18,7 +12,7 @@ class ContentCandidate:
     page_type: str
     cluster: str
     keywords: tuple[str, ...] = ()
-    verified: bool = True
+    verified: bool = False
 
 
 @dataclass(frozen=True)
@@ -28,38 +22,30 @@ class ContentMatch:
     reasons: tuple[str, ...]
 
 
+_STOPWORDS = {"a", "an", "the", "is", "are", "for", "to", "of", "and", "in", "at", "on", "do", "does"}
+
+
 def _tokens(text: str) -> set[str]:
-    return set(re.findall(r"[a-z0-9]+", text.lower()))
+    return set(re.findall(r"[a-z0-9]+", text.lower())) - _STOPWORDS
 
 
-def match_verified_content(
-    query: str,
-    candidates: list[ContentCandidate],
-    required_cluster: str | None = None,
-) -> ContentMatch:
+def match_verified_content(query: str, candidates: list[ContentCandidate],
+                           required_cluster: str | None = None) -> ContentMatch:
     q = _tokens(query)
-    best: ContentMatch = ContentMatch(None, 0.0, ("no verified candidate",))
+    best = ContentMatch(None, 0.0, ("no verified candidate",))
     for candidate in candidates:
-        if not candidate.verified:
-            continue
-        if urlparse(candidate.url).scheme not in {"http", "https"}:
+        parsed = urlparse(candidate.url)
+        if not candidate.verified or parsed.scheme != "https" or not parsed.hostname:
             continue
         if required_cluster and candidate.cluster != required_cluster:
             continue
-
-        target = _tokens(
-            " ".join([candidate.title, candidate.page_type, candidate.cluster, *candidate.keywords])
-        )
+        target = _tokens(" ".join((candidate.title, candidate.cluster, *candidate.keywords)))
         if not q or not target:
             continue
         overlap = len(q & target) / len(q)
-        specificity = 0.10 if candidate.page_type in {"supporting", "article", "service", "program"} else 0.0
-        score = min(1.0, overlap + specificity)
-        reasons = (
-            f"token_overlap={overlap:.3f}",
-            f"specificity_bonus={specificity:.2f}",
-            "verified_url=true",
-        )
+        # This is a retrieval ranking, NOT a calibrated relevance probability.
+        score = min(overlap, 0.79)
         if score > best.score:
-            best = ContentMatch(candidate, score, reasons)
+            best = ContentMatch(candidate, score,
+                (f"lexical_retrieval={overlap:.3f}", "requires_semantic_and_factual_review"))
     return best
