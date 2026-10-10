@@ -1,6 +1,4 @@
-"""Normalize DataForSEO SERPs and compare result overlap."""
-
-from __future__ import annotations
+"""Organic SERP normalization and conservative clustering."""
 
 from dataclasses import dataclass
 from urllib.parse import urlsplit, urlunsplit
@@ -16,35 +14,38 @@ class SerpOverlap:
 
 
 def canonical_url(url: str) -> str:
-    parts = urlsplit(url)
-    path = parts.path.rstrip("/") or "/"
-    return urlunsplit((parts.scheme.lower(), parts.netloc.lower(), path, "", ""))
+    p = urlsplit(url)
+    if p.scheme not in ("https", "http") or not p.netloc:
+        return ""
+    return urlunsplit((p.scheme.lower(), p.netloc.lower(), p.path.rstrip("/") or "/", "", ""))
 
 
 def organic_urls(response: dict, limit: int = 10) -> tuple[str, ...]:
-    urls: list[str] = []
+    urls = []
     for task in response.get("tasks") or []:
+        if task.get("status_code") not in (None, 20000):
+            continue
         for result in task.get("result") or []:
             for item in result.get("items") or []:
-                if item.get("type") != "organic" or not item.get("url"):
+                if item.get("type") != "organic":
                     continue
-                url = canonical_url(item["url"])
-                if url not in urls:
+                url = canonical_url(item.get("url", ""))
+                if url and url not in urls:
                     urls.append(url)
-                if len(urls) >= limit:
+                if len(urls) == limit:
                     return tuple(urls)
     return tuple(urls)
 
 
 def compare_serps(a: dict, b: dict, threshold: int = 4) -> SerpOverlap:
-    urls_a, urls_b = organic_urls(a), organic_urls(b)
-    shared = len(set(urls_a) & set(urls_b))
-    # 4/10 is an internal convention. Exactly 3 is deliberately manual because
-    # SERPs move and a one-URL change would flip the page decision.
-    if shared >= threshold:
+    aa, bb = organic_urls(a), organic_urls(b)
+    shared = len(set(aa) & set(bb))
+    if len(aa) < 10 or len(bb) < 10:
+        decision = "insufficient_evidence"
+    elif shared >= threshold:
         decision = "same_page"
     elif shared <= 2:
         decision = "separate_pages"
     else:
         decision = "manual_review"
-    return SerpOverlap(shared, threshold, decision, urls_a, urls_b)
+    return SerpOverlap(shared, threshold, decision, aa, bb)
