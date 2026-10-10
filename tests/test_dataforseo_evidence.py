@@ -58,7 +58,7 @@ class EvidenceLayerTests(unittest.TestCase):
         b = response(["https://a.com/1", "https://b.com/2", "https://c.com/3", "https://x.com/9"])
         result = compare_serps(a, b)
         self.assertEqual(result.shared_urls, 3)
-        self.assertEqual(result.decision, "manual_review")
+        self.assertEqual(result.decision, "insufficient_evidence")
 
     def test_opportunity_does_not_require_authority_score(self):
         result = score_opportunity(OpportunityInputs(
@@ -71,6 +71,40 @@ class EvidenceLayerTests(unittest.TestCase):
         ))
         self.assertGreater(result.score, .8)
         self.assertEqual(result.components["provider_difficulty"], 62)
+    def test_threshold_boundary(self):
+        gate = ConfidenceGate()
+        def evaluate(value):
+            return gate.evaluate(search_evidence=value, audience_fit=1,
+                                 destination_match=1, content_quality=1,
+                                 destination_verified=True)
+        self.assertEqual(evaluate(.96).action, "human_review")
+        self.assertEqual(evaluate(.97).action, "autonomous")
+        self.assertEqual(evaluate(.98).action, "autonomous")
+
+    def test_invalid_confidence_is_rejected(self):
+        self.assertEqual(ConfidenceGate().evaluate(
+            search_evidence=float("nan"), audience_fit=1, destination_match=1,
+            content_quality=1, destination_verified=True).action, "reject")
+
+    def test_unverified_candidate_default(self):
+        candidate = ContentCandidate("https://example.com", "Example", "article", "karate")
+        self.assertFalse(candidate.verified)
+
+    def test_lexical_match_never_certifies_destination(self):
+        candidate = ContentCandidate("https://example.com/a", "kids karate", "article",
+                                     "karate", ("kids", "karate"), True)
+        result = match_verified_content("kids karate", [candidate])
+        self.assertLess(result.score, .97)
+
+    def test_complete_serp_borderline(self):
+        def response(shared, prefix):
+            urls = [f"https://shared.com/{i}" for i in range(shared)]
+            urls += [f"https://{prefix}.com/{i}" for i in range(10 - shared)]
+            return {"tasks": [{"result": [{"items": [
+                {"type": "organic", "url": url} for url in urls
+            ]}]}]}
+        self.assertEqual(compare_serps(response(3, "one"), response(3, "two")).decision,
+                         "manual_review")
 
 if __name__ == "__main__":
     unittest.main()
