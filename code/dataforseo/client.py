@@ -57,6 +57,16 @@ class DataForSEOClient:
             raise DataForSEOError(
                 f"DataForSEO status {data.get('status_code')}: {data.get('status_message')}"
             )
+        returned = data.get("tasks")
+        if not isinstance(returned, list) or len(returned) != len(tasks):
+            raise DataForSEOError("Missing or incomplete task results")
+        for index, task in enumerate(returned):
+            if not isinstance(task, dict) or task.get("status_code") != 20000:
+                raise DataForSEOError(
+                    f"Task {index} failed: {task.get('status_message') if isinstance(task, dict) else 'invalid task'}"
+                )
+            if not isinstance(task.get("result"), list) or not task["result"]:
+                raise DataForSEOError(f"Task {index} returned no result")
         self.cache.put(path.replace("/", "_"), cache_payload, data)
         return data
 
