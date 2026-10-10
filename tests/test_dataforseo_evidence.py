@@ -1,12 +1,16 @@
 """Unit tests for deterministic Milestone 1 safeguards."""
 
 import unittest
+import sys
+from pathlib import Path
 
-from code.dataforseo.confidence import ConfidenceGate
-from code.dataforseo.content_match import ContentCandidate, match_verified_content
-from code.dataforseo.paa import extract_paa
-from code.dataforseo.opportunity import OpportunityInputs, score_opportunity
-from code.dataforseo.serp import compare_serps
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'code'))
+
+from dataforseo.confidence import ConfidenceGate
+from dataforseo.content_match import ContentCandidate, match_verified_content
+from dataforseo.paa import extract_paa
+from dataforseo.opportunity import OpportunityInputs, score_opportunity
+from dataforseo.serp import compare_serps
 
 
 class EvidenceLayerTests(unittest.TestCase):
